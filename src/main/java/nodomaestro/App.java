@@ -6,8 +6,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class App {
 
@@ -54,16 +52,46 @@ public class App {
                         if (transaccionExitosa) {
                             String mensajeTransaccionExitosa = nodoMaestro.ejecutarTransaccion(idCuentaOrigen, idCuentaDestino, montoTransferencia);
                             pw.println(mensajeTransaccionExitosa);
-                            
-                            if(nodoMaestro.isMinar()) {
+
+                            if (nodoMaestro.isMinar()) {
                                 pw.println("M-" + nodoMaestro.getNroCeros() + nodoMaestro.getHashBLoqueAnterior() + nodoMaestro.getHashRaiz());
                                 nodoMaestro.setMinar(false);
                             }
-                            
+
                         } else {
                             String mensajeTransaccionFallida = "F" + line.substring(1);
                             pw.println(mensajeTransaccionFallida);
                         }
+                    } else if (datos[0].equals("V")) {
+                        int nonce = Integer.parseInt(datos[1]);
+                        int tiempo = Integer.parseInt(datos[2]);
+                        int nroCeros = Integer.parseInt(datos[3]);
+                        String hashTotal = datos[4];
+                        double porcentaje = Double.parseDouble(datos[5]);
+
+                        System.out.println("\n*****************************************");
+                        System.out.println("Datos recibidos:");
+                        System.out.println("Nonce: " + nonce);
+                        System.out.println("Tiempo en hallar el nonce: " + tiempo);
+                        System.out.println("Número de ceros: " + nroCeros);
+                        System.out.println("Hash del bloque: " + hashTotal);
+                        System.out.println("Porcentaje de nodos de acuerdo: " + porcentaje * 100 + "%");
+                        System.out.println("*****************************************");
+
+                        if (porcentaje > 0.5) {
+                            String[] bloque = nodoMaestro.actualizarBloque(hashTotal);
+
+                            StringBuilder mensajeBloque = new StringBuilder();
+
+                            // Forma mensaje a enviar con la información del bloque
+                            for (int i = 0; i < bloque.length - 1; i++) {
+                                mensajeBloque.append("B-" + bloque[i] + ";");
+                            }
+                            mensajeBloque.append("B-" + bloque[bloque.length - 1]);
+                            
+                            pw.println(mensajeBloque.toString());
+                        }
+
                     }
                 }
 

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +27,7 @@ public class NodoMaestro {
     private String hashBLoqueAnterior = "0".repeat(64);
     private String hashRaiz = "";
     private boolean minar = false;
+    private LinkedList<String[]> bloques = new LinkedList<>();
 
     public int getNroCeros() {
         return nroCeros;
@@ -99,6 +102,8 @@ public class NodoMaestro {
             hashRaiz = calcularHashRaiz(transacciones);
 
             minar = true;
+
+            bloques.add(Arrays.copyOf(transacciones, nroTransaccionesBloque));
 
             // Restear transacciones del bloque actual
             nroTransaccionesRealizadas = 0;
@@ -186,6 +191,24 @@ public class NodoMaestro {
             System.err.println("No soporta SHA-256");
         }
         return "";
+    }
+
+    public String[] actualizarBloque(String hash) {
+        String[] ultimoBloque = bloques.pop();
+
+        File fileBlockchain = new File("blockchaincuentas.txt");
+
+        try (FileWriter fileWriter = new FileWriter(fileBlockchain, true)) {
+
+            for (int i = 0; i < nroTransaccionesBloque; i++) {
+                ultimoBloque[i] = ultimoBloque[i] + hash;
+                fileWriter.write(ultimoBloque[i] + "\n");
+            }
+        } catch (IOException ex) {
+            System.err.println("Error con archivo 'blockchaincuentas.txt'");
+        }
+
+        return ultimoBloque;
     }
 
 }
