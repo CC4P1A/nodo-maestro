@@ -14,9 +14,8 @@ import java.util.Scanner;
 public class Cuentas {
     
     private File file = new File("cuentas.txt");
-    private int nroCuentas = 10;
     
-    public void crearCuentas() {
+    public void crearCuentas(int nroCuentas) {
         try {
             if (file.createNewFile()) {
                 try (FileWriter fileWriter = new FileWriter(file)) {
@@ -46,25 +45,25 @@ public class Cuentas {
     }
     
     public String getStringCuentas() {
-        StringBuilder cuentasStr = new StringBuilder();
-        cuentasStr.append("C-");
+        StringBuilder cuentasTodas = new StringBuilder();
+        cuentasTodas.append("C-");
         try {
             Scanner scanner = new Scanner(file);
             while (scanner.hasNextLine()) {
                 int idCuenta = scanner.nextInt();
-                int saldo = scanner.nextInt();
-                cuentasStr.append(idCuenta);
-                cuentasStr.append("-");
-                cuentasStr.append(saldo);
+                double saldo = scanner.nextDouble();
+                cuentasTodas.append(idCuenta);
+                cuentasTodas.append("-");
+                cuentasTodas.append(String.format("%.2f", saldo));
                 if(scanner.hasNextLine()) {
-                    cuentasStr.append(";");
+                    cuentasTodas.append(";");
                 }  
             }
             scanner.close();
         } catch (FileNotFoundException e) {
             System.out.println("Error durante validación de transacción");
         }
-        return cuentasStr.toString();
+        return cuentasTodas.toString();
     }
 
     
