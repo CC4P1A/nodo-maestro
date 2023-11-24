@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -12,14 +13,15 @@ public class App {
     public static void main(String[] args) {
         int nroCuentas = 10;
         String ipNodoRedireccion = "127.0.0.1";
-        int puertoNodoRedireccion = 8189;
-
-        Cuentas cuentas = new Cuentas();
-        cuentas.crearCuentas(nroCuentas);
-        String cuentasTodas = cuentas.getStringCuentas();
+        int puertoNodoRedireccion = 40005;
 
         try {
-            Socket socket = new Socket(ipNodoRedireccion, puertoNodoRedireccion);
+            ServerSocket serverSocket = new ServerSocket();
+            Socket socket = serverSocket.accept();
+
+            Cuentas cuentas = new Cuentas();
+            cuentas.crearCuentas(nroCuentas);
+            String cuentasTodas = cuentas.getStringCuentas();
 
             try {
                 OutputStream secuenciaDeSalida = socket.getOutputStream();
@@ -44,13 +46,13 @@ public class App {
                         int idSolicitud = Integer.parseInt(datos[1]);
                         int idCuentaOrigen = Integer.parseInt(datos[2]);
                         int idCuentaDestino = Integer.parseInt(datos[3]);
-                        double montoTransferencia = Double.parseDouble(datos[4]);
+                        int montoTransferencia = Integer.parseInt(datos[4]);
 
                         boolean transaccionExitosa
                                 = nodoMaestro.validarTransaccion(idCuentaOrigen, idCuentaDestino, montoTransferencia);
 
                         if (transaccionExitosa) {
-                            String mensajeTransaccionExitosa = nodoMaestro.ejecutarTransaccion(idCuentaOrigen, idCuentaDestino, montoTransferencia);
+                            String mensajeTransaccionExitosa = nodoMaestro.ejecutarTransaccion(idSolicitud, idCuentaOrigen, idCuentaDestino, montoTransferencia);
                             pw.println(mensajeTransaccionExitosa);
 
                             if (nodoMaestro.isMinar()) {
@@ -88,7 +90,7 @@ public class App {
                                 mensajeBloque.append("B-" + bloque[i] + ";");
                             }
                             mensajeBloque.append("B-" + bloque[bloque.length - 1]);
-                            
+
                             pw.println(mensajeBloque.toString());
                         }
 

@@ -51,10 +51,10 @@ public class Cuentas {
             Scanner scanner = new Scanner(file);
             while (scanner.hasNextLine()) {
                 int idCuenta = scanner.nextInt();
-                double saldo = scanner.nextDouble();
+                int saldo = scanner.nextInt();
                 cuentasTodas.append(idCuenta);
                 cuentasTodas.append("-");
-                cuentasTodas.append(String.format("%.2f", saldo));
+                cuentasTodas.append(saldo);
                 if(scanner.hasNextLine()) {
                     cuentasTodas.append(";");
                 }  

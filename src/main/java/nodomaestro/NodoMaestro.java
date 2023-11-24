@@ -70,7 +70,7 @@ public class NodoMaestro {
      * @return true si la cuenta origen y destino existen y hay sufiente saldo en la cuenta origen para realizar la
      * transacción
      */
-    public boolean validarTransaccion(int cuentaOrigen, int cuentaDestino, double montoTransferencia) {
+    public boolean validarTransaccion(int cuentaOrigen, int cuentaDestino, int montoTransferencia) {
         boolean origenValido = false;
         boolean destinoValido = false;
 
@@ -78,7 +78,7 @@ public class NodoMaestro {
             Scanner scanner = new Scanner(file);
             while (scanner.hasNextLine()) {
                 int cuenta = scanner.nextInt();
-                double saldo = scanner.nextDouble();
+                int saldo = scanner.nextInt();
                 if (cuenta == cuentaDestino) {
                     destinoValido = true;
                 }
@@ -93,7 +93,7 @@ public class NodoMaestro {
         return origenValido && destinoValido;
     }
 
-    public String ejecutarTransaccion(int cuentaOrigen, int cuentaDestino, double montoTransferencia) {
+    public String ejecutarTransaccion(int idSolicitud, int cuentaOrigen, int cuentaDestino, int montoTransferencia) {
         transacciones[nroTransaccionesRealizadas] = cuentaOrigen + "-" + cuentaDestino + "-" + montoTransferencia;
 
         if (nroTransaccionesRealizadas < nroTransaccionesBloque - 1) {
@@ -110,8 +110,8 @@ public class NodoMaestro {
             transacciones = new String[nroTransaccionesBloque];
         }
 
-        double nuevoSaldoCuentaOrigen = 0;
-        double nuevoSaldoCuentaDestino = 0;
+        int nuevoSaldoCuentaOrigen = 0;
+        int nuevoSaldoCuentaDestino = 0;
 
         String lineaOrigen = "";
         String lineaDestino = "";
@@ -126,7 +126,7 @@ public class NodoMaestro {
 
                 String[] datosLinea = linea.split(" ");
                 int cuenta = Integer.parseInt(datosLinea[0]);
-                double saldo = Double.parseDouble(datosLinea[1]);
+                int saldo = Integer.parseInt(datosLinea[1]);
 
                 if (cuenta == cuentaOrigen) {
                     nuevoSaldoCuentaOrigen = saldo - montoTransferencia;
@@ -154,6 +154,7 @@ public class NodoMaestro {
 
         // Arma respuesta a enviar
         StringBuilder respuesta = new StringBuilder("A-");
+        respuesta.append(idSolicitud).append("-");
         respuesta.append(cuentaOrigen).append("-").append(nuevoSaldoCuentaOrigen);
         respuesta.append("-").append(cuentaDestino).append("-").append(nuevoSaldoCuentaDestino);
 
