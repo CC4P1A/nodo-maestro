@@ -73,18 +73,23 @@ public class NodoMaestro {
     public boolean validarTransaccion(int cuentaOrigen, int cuentaDestino, int montoTransferencia) {
         boolean origenValido = false;
         boolean destinoValido = false;
-
+        
         try {
             Scanner scanner = new Scanner(file);
             while (scanner.hasNextLine()) {
-                int cuenta = scanner.nextInt();
-                int saldo = scanner.nextInt();
+                String line = scanner.nextLine();
+                String [] arr = line.split(" ");
+                int cuenta = Integer.parseInt(arr[0]);
+                int saldo = Integer.parseInt(arr[1]);
+                //int cuenta = scanner.nextInt();
+                //int saldo = scanner.nextInt();
                 if (cuenta == cuentaDestino) {
                     destinoValido = true;
                 }
                 if (cuenta == cuentaOrigen && saldo >= montoTransferencia) {
                     origenValido = true;
                 }
+                
             }
             scanner.close();
         } catch (FileNotFoundException e) {
@@ -202,7 +207,7 @@ public class NodoMaestro {
         try (FileWriter fileWriter = new FileWriter(fileBlockchain, true)) {
 
             for (int i = 0; i < nroTransaccionesBloque; i++) {
-                ultimoBloque[i] = ultimoBloque[i] + hash;
+                ultimoBloque[i] = ultimoBloque[i] + "-" + hash;
                 fileWriter.write(ultimoBloque[i] + "\n");
             }
         } catch (IOException ex) {

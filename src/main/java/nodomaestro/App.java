@@ -11,12 +11,12 @@ import java.util.Scanner;
 public class App {
 
     public static void main(String[] args) {
-        int nroCuentas = 10;
+        int nroCuentas = 5;
         String ipNodoRedireccion = "127.0.0.1";
-        int puertoNodoRedireccion = 40005;
+        int puertoNodoRedireccion = 40000;
 
         try {
-            ServerSocket serverSocket = new ServerSocket();
+            ServerSocket serverSocket = new ServerSocket(puertoNodoRedireccion);
             Socket socket = serverSocket.accept();
 
             Cuentas cuentas = new Cuentas();
@@ -56,20 +56,20 @@ public class App {
                             pw.println(mensajeTransaccionExitosa);
 
                             if (nodoMaestro.isMinar()) {
-                                pw.println("M-" + nodoMaestro.getNroCeros() + nodoMaestro.getHashBLoqueAnterior() + nodoMaestro.getHashRaiz());
+                                pw.println("M-" + nodoMaestro.getNroCeros() + "-" + nodoMaestro.getHashBLoqueAnterior() + "-" + nodoMaestro.getHashRaiz());
                                 nodoMaestro.setMinar(false);
                             }
 
                         } else {
-                            String mensajeTransaccionFallida = "F" + line.substring(1);
+                            String mensajeTransaccionFallida = "F-" +idSolicitud + "-No se realizo la transaccion";
                             pw.println(mensajeTransaccionFallida);
                         }
                     } else if (datos[0].equals("V")) {
                         int nonce = Integer.parseInt(datos[1]);
-                        int tiempo = Integer.parseInt(datos[2]);
+                        double tiempo = Double.parseDouble(datos[2]);
                         int nroCeros = Integer.parseInt(datos[3]);
-                        String hashTotal = datos[4];
-                        double porcentaje = Double.parseDouble(datos[5]);
+                        String hashTotal = datos[6];
+                        double porcentaje = Double.parseDouble(datos[7]);
 
                         System.out.println("\n*****************************************");
                         System.out.println("Datos recibidos:");
